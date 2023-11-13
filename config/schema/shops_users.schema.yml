@@ -1,0 +1,10 @@
+shops_users.settings:
+  type: config_object
+  label: 'Shops users config'
+  mapping:
+    xml_uri:
+      type: text
+      label: 'XML file location'
+    email_domain:
+      type: text
+      label: 'Domain of the users email addresses'

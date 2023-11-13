@@ -1,0 +1,22 @@
+{
+    "name": "brabhold/shops_users",
+    "type": "drupal-module",
+    "description": "This module parse and update users based on a custom XML file",
+    "homepage": "https://github.com/brabhold/shops_users",
+    "authors": [
+        {
+            "name": "Timothee Zammattio",
+            "email": "timothee.zammattio@brabhold.be",
+            "role": "Maintainer"
+        },
+        {
+            "name": "Olivier Deboyser",
+            "homepage": "https://www.drupal.org/u/oldeb",
+            "role": "Consultant"
+        }
+    ],
+    "minimum-stability": "alpha",
+    "require": {
+        "drupal/ip_login": "^4.0"
+    }
+}

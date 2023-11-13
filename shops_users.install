@@ -1,0 +1,50 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the shops_users module.
+ */
+
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_install().
+ */
+function shops_users_install() {
+  $config = \Drupal::service('config.factory')->getEditable('shops_users.settings');
+
+  $root_dir = getenv('PROJECT_DIR');
+  $xml_uri = getenv('BUTCHERY_USERS_XML_URI');
+  $logger = \Drupal::logger('shops_users');
+
+  // Set xml_uri config value from environment variables.
+  if ($xml_uri !== FALSE) {
+    if ($root_dir !== FALSE) {
+      $xml_uri = $root_dir . $xml_uri;
+    }
+    $config->set('xml_uri', $xml_uri)->save();
+    $logger->info(t('Shops Users XML path found: @uri', ['@uri' => $xml_uri]));
+  }
+
+  $manager = \Drupal::service('shops_users.manager');
+  if ($manager->isConfigured()) {
+    try {
+      $manager->blockAllUsers();
+      $manager->processXml();
+    } catch (\Exception $e) {
+      $logger->error($e->getMessage());
+    }
+  }
+  else {
+    \Drupal::messenger()->addWarning(t('Please <a href=":config">configure the Shops Users module</a> before using it.', [
+      ':config' => Url::fromRoute('shops_users.settings')->toString(),
+    ]));
+  }
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function shops_users_uninstall() {
+  \Drupal::service('shops_users.manager')->blockAllUsers();
+}

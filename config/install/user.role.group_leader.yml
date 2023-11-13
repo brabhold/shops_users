@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - shops_users
+  enforced:
+    module:
+      - shops_users
+id: group_leader
+label: 'Group leader'
+weight: 4
+is_admin: null
+permissions: {  }

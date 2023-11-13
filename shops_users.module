@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * @file
+ * Contains shops_users.module.
+ */
+
+/**
+ * Implements hook_help().
+ */
+function shops_users_help($route_name, $route_match) {
+  switch ($route_name) {
+    // Main module help for the shops_users module.
+    case 'help.page.shops_users':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('The Shops Users module allow to sychronise users with a custom XML file.') . '</p>';
+      $output .= '<p>' . t('Custom fields are added to the users and a cron job create users from the XML file and update them on a regular basis.') . '</p>';
+      $output .= '<p>' . t('This module require the <strong>ip_login</strong> module.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_cron().
+ */
+function shops_users_cron() {
+  $manager = \Drupal::service('shops_users.manager');
+  $logger = \Drupal::logger('shops_users');
+  $logger->debug('cron start');
+
+  if ($manager->isConfigured()) {
+    try {
+      $manager->blockAllUsers();
+      $manager->processXml();
+    } catch (\Exception $e) {
+      $logger->error($e->getMessage());
+    }
+  }
+  else {
+    $logger->alert(t('Please configure the Shops Users module before using it.'));
+  }
+
+  $logger->debug('cron end');
+}

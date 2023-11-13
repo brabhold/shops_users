@@ -1,0 +1,27 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_come_from_xml
+  module:
+    - user
+    - shops_users
+  enforced:
+    module:
+      - shops_users
+id: user.user.field_come_from_xml
+field_name: field_come_from_xml
+entity_type: user
+bundle: user
+label: 'come from xml'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'Yes'
+  off_label: 'No'
+field_type: boolean

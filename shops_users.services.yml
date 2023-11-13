@@ -1,0 +1,4 @@
+services:
+  shops_users.manager:
+    class: \Drupal\shops_users\ShopsUsersManager
+    arguments: ['@config.factory', '@logger.factory', '@entity_type.manager']

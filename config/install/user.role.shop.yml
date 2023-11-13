@@ -1,0 +1,13 @@
+langcode: en
+status: true
+dependencies:
+  module:
+    - shops_users
+  enforced:
+    module:
+      - shops_users
+id: shop
+label: Shop user
+weight: 3
+is_admin: null
+permissions: {  }

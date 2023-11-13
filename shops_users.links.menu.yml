@@ -1,0 +1,5 @@
+shops_users.settings:
+  title: 'Shops users'
+  parent: user.admin_index
+  description: 'Configure Shops Users settings.'
+  route_name: shops_users.settings

@@ -1,0 +1,9 @@
+name: 'Shops Users'
+description: 'Shops users update module'
+package: Brabhold
+type: module
+core_version_requirement: ^9 || ^10
+dependencies:
+  - ip_login:ip_login
+configure: shops_users.settings
+php: 8.0

@@ -1,0 +1,7 @@
+shops_users.settings:
+  path: '/admin/config/people/shops_users'
+  defaults:
+    _form: '\Drupal\shops_users\Form\ShopsUsersSettingsForm'
+    _title: 'Shops users settings'
+  requirements:
+    _permission: 'administer account settings'

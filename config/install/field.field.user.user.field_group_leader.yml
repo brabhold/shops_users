@@ -1,0 +1,27 @@
+langcode: endrush entup
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_group_leader
+  module:
+    - user
+    - shops_users
+  enforced:
+    module:
+      - shops_users
+id: user.user.field_group_leader
+field_name: field_group_leader
+entity_type: user
+bundle: user
+label: group_leader
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  min: null
+  max: null
+  prefix: ''
+  suffix: ''
+field_type: integer

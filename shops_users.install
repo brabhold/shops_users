@@ -11,21 +11,30 @@ use Drupal\Core\Url;
  * Implements hook_install().
  */
 function shops_users_install() {
-  $config = \Drupal::service('config.factory')->getEditable('shops_users.settings');
-
   $root_dir = getenv('PROJECT_DIR');
-  $xml_uri = getenv('BUTCHERY_USERS_XML_URI');
+  $xml_uri = getenv('BUTCHERY_USERS_XML_URI') ?: getenv('SHOPS_USERS_XML_URI');
+  $email_domain = getenv('SHOPS_USERS_EMAIL_DOMAIN');
   $logger = \Drupal::logger('shops_users');
+  $configFactory = \Drupal::service('config.factory');
+  $shopsUsersConfig = $configFactory->getEditable('shops_users.settings');
 
-  // Set xml_uri config value from environment variables.
+  // Prevent shops notification on account activation.
+  $configFactory->getEditable('user.settings')->set('notify.status_activated', FALSE)->save();
+
+  // Set default config values from environment variables.
   if ($xml_uri !== FALSE) {
     if ($root_dir !== FALSE) {
       $xml_uri = $root_dir . $xml_uri;
     }
-    $config->set('xml_uri', $xml_uri)->save();
+    $shopsUsersConfig->set('xml_uri', $xml_uri)->save();
     $logger->info(t('Shops Users XML path found: @uri', ['@uri' => $xml_uri]));
   }
+  if ($email_domain !== FALSE) {
+    $shopsUsersConfig->set('email_domain', $email_domain)->save();
+    $logger->info(t('Shops Users email domain found: @domain', ['@domain' => $email_domain]));
+  }
 
+  // Process import if configuration is correct.
   $manager = \Drupal::service('shops_users.manager');
   if ($manager->isConfigured()) {
     try {

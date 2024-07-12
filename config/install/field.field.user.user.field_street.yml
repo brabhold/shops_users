@@ -1,0 +1,23 @@
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_street
+  module:
+    - user
+    - shops_users
+  enforced:
+    module:
+      - shops_users
+id: user.user.field_street
+field_name: field_street
+entity_type: user
+bundle: user
+label: country
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -52,6 +52,14 @@ function shops_users_install() {
 }
 
 /**
+ * Add configuration file
+ */
+function shops_users_update_10001() {
+    // Importer les nouvelles configurations de champ.
+    \Drupal::service('config.installer')->installDefaultConfig('module', 'shops_users');
+}
+
+/**
  * Implements hook_uninstall().
  */
 function shops_users_uninstall() {

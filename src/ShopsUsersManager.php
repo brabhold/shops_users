@@ -200,6 +200,9 @@ class ShopsUsersManager {
     $user->set('field_country', strtolower($this->formatValue($data['land'])));
     $user->set('field_region', $this->getRegion($this->formatValue($data['land']), $this->formatValue($data['dc'])));
     $user->set('field_city', $this->formatValue($data['woonplaats']));
+    $user->set('field_street', $this->formatValue($data['adres']));
+    $user->set('field_phone', $this->formatValue($data['tel']));
+    $user->set('field_fax', $this->formatValue($data['fax']));
     $user->set('field_group_leader', $groupLeaderId);
     $user->set('field_come_from_xml', 1);
     $user->addRole('shop');

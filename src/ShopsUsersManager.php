@@ -11,8 +11,10 @@ use Drupal\user\Entity\User;
 /**
  * Service to manage the shops users imports.
  */
-class ShopsUsersManager {
+class ShopsUsersManager
+{
   use StringTranslationTrait;
+
   /**
    * The module's configuration object.
    *
@@ -45,10 +47,11 @@ class ShopsUsersManager {
    *   Entity type manager service.
    */
   public function __construct(
-    ConfigFactoryInterface $configFactory,
+    ConfigFactoryInterface        $configFactory,
     LoggerChannelFactoryInterface $loggerFactory,
-    EntityTypeManagerInterface $entityTypeManager
-  ) {
+    EntityTypeManagerInterface    $entityTypeManager
+  )
+  {
     $this->config = $configFactory->get('shops_users.settings');
     $this->logger = $loggerFactory->get('shops_users');
     $this->entityTypeManager = $entityTypeManager;
@@ -57,7 +60,8 @@ class ShopsUsersManager {
   /**
    * Parse the Shops Users data XML.
    */
-  public function processXml() : void {
+  public function processXml(): void
+  {
     $uri = $this->config->get('xml_uri');
     $xml = simplexml_load_file($uri);
 
@@ -77,8 +81,7 @@ class ShopsUsersManager {
           }
         }
       }
-    }
-    else {
+    } else {
       $this->logger->error($this->t('Empty or missing XML at @uri', ['@uri' => $uri]));
     }
   }
@@ -86,7 +89,8 @@ class ShopsUsersManager {
   /**
    * Disable all users from the XML.
    */
-  public function blockAllUsers() : void {
+  public function blockAllUsers(): void
+  {
     $users = $this->entityTypeManager->getStorage('user')->loadByProperties([
       'status' => 1,
       'field_come_from_xml' => 1,
@@ -108,7 +112,8 @@ class ShopsUsersManager {
    * @return int|array
    *   An array of user ids.
    */
-  public function getUserByGroupLeader(int $groupLeaderId) {
+  public function getUserByGroupLeader(int $groupLeaderId)
+  {
     return $this->entityTypeManager->getStorage('user')->getQuery()
       ->condition('status', 1)
       ->condition('field_group_leader', $groupLeaderId)
@@ -122,11 +127,11 @@ class ShopsUsersManager {
    * @return bool
    *   True if the module is configured, false otherwise.
    */
-  public function isConfigured() : bool {
+  public function isConfigured(): bool
+  {
     if ($this->config->get('xml_uri') && $this->config->get('email_domain')) {
       return TRUE;
-    }
-    else {
+    } else {
       return FALSE;
     }
   }
@@ -140,7 +145,8 @@ class ShopsUsersManager {
    * @return int
    *   The group leader identifier.
    */
-  private function upsertGroupLeader(\SimpleXMLElement $data) : int {
+  private function upsertGroupLeader(\SimpleXMLElement $data): int
+  {
     $email = $this->formatValue($data['email_grpchf']);
     if (!$user = user_load_by_mail($email)) {
       $user = User::create();
@@ -158,8 +164,7 @@ class ShopsUsersManager {
 
     try {
       $user->save();
-    }
-    catch (\Exception $e) {
+    } catch (\Exception $e) {
       $this->logger->error($this->t('Error while upserting group leader @grpchf : @error', [
         '@grpchf' => $data['grpchf'],
         '@error' => $e->getMessage(),
@@ -177,7 +182,8 @@ class ShopsUsersManager {
    * @param int $groupLeaderId
    *   The related group leader identifier.
    */
-  private function upsertShop(\SimpleXMLElement $data, int $groupLeaderId) : void {
+  private function upsertShop(\SimpleXMLElement $data, int $groupLeaderId): void
+  {
     $storeUnit = $this->formatValue($data['storeunit']);
     $email = '5-' . $storeUnit . '@' . $this->config->get('email_domain');
 
@@ -187,8 +193,16 @@ class ShopsUsersManager {
     }
 
     $user->setEmail($email);
-    $user->setUsername($this->formatValue($data['verkort']));
-    $user->setPassword($email);
+
+    $username = $this->formatValue($data['verkort']);
+    $request = \Drupal::request();
+    $current_path = $request->getPathInfo();
+    if (strpos($current_path, 'intrastore') !== FALSE) {
+      $username .= ' ' . $storeUnit;
+    }
+    $user->setUsername($username);
+
+    $user->setPassword($storeUnit);
     $user->set('field_storeunit', $storeUnit);
     $user->set('ip_login', [
       'ip_start' => inet_pton($data['ip']),
@@ -210,8 +224,7 @@ class ShopsUsersManager {
 
     try {
       $user->save();
-    }
-    catch (\Exception $e) {
+    } catch (\Exception $e) {
       $this->logger->error($this->t('Error while upserting shop @shop : @error', [
         '@shop' => $storeUnit,
         '@error' => $e->getMessage(),
@@ -227,7 +240,8 @@ class ShopsUsersManager {
    * @param \SimpleXMLElement $data
    *   Shop data from the XML.
    */
-  private function addInfoGroupLeader(int $groupLeaderId, \SimpleXMLElement $data) : void {
+  private function addInfoGroupLeader(int $groupLeaderId, \SimpleXMLElement $data): void
+  {
     $user = User::load($groupLeaderId);
     $user->set('field_storeunit', $this->formatValue($data['storeunit']));
     $user->set('field_postnr', $this->formatValue($data['postnr']));
@@ -236,8 +250,7 @@ class ShopsUsersManager {
     $user->set('field_city', $this->formatValue($data['woonplaats']));
     try {
       $user->save();
-    }
-    catch (\Exception $e) {
+    } catch (\Exception $e) {
       $this->logger->error($this->t('Error while updating group leader @grpchf info : @error', [
         '@grpchf' => $groupLeaderId,
         '@error' => $e->getMessage(),
@@ -251,8 +264,9 @@ class ShopsUsersManager {
    * @return string
    *   The formatted value.
    */
-  private function formatValue($value) : string {
-    return trim((string) $value);
+  private function formatValue($value): string
+  {
+    return trim((string)$value);
   }
 
   /**
@@ -261,7 +275,8 @@ class ShopsUsersManager {
    * @return string
    *   The formatted language id.
    */
-  private function formatLang($taal) : string {
+  private function formatLang($taal): string
+  {
     return $taal == 'N' ? 'nl' : 'fr';
   }
 
@@ -276,7 +291,8 @@ class ShopsUsersManager {
    * @return string
    *   The lowercase region or country code (2 chars).
    */
-  private function getRegion($countryCode, $distributionCenter) : string {
+  private function getRegion($countryCode, $distributionCenter): string
+  {
     if ($countryCode == 'LU') {
       return 'lu';
     }

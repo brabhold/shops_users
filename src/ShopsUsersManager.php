@@ -187,8 +187,15 @@ class ShopsUsersManager {
     }
 
     $user->setEmail($email);
-    $user->setUsername($this->formatValue($data['verkort']));
-    $user->setPassword($email);
+
+    $username = $this->formatValue($data['verkort']);
+    $current_path = $_SERVER['HTTP_HOST'];
+    if (strpos($current_path, 'intrastore') !== FALSE) {
+      $username .= ' ' . $storeUnit;
+    }
+    $user->setUsername($username);
+
+    $user->setPassword($storeUnit);
     $user->set('field_storeunit', $storeUnit);
     $user->set('ip_login', [
       'ip_start' => inet_pton($data['ip']),

@@ -195,8 +195,7 @@ class ShopsUsersManager
     $user->setEmail($email);
 
     $username = $this->formatValue($data['verkort']);
-    $request = \Drupal::request();
-    $current_path = $request->getPathInfo();
+    $current_path = $_SERVER['HTTP_HOST'];
     if (strpos($current_path, 'intrastore') !== FALSE) {
       $username .= ' ' . $storeUnit;
     }

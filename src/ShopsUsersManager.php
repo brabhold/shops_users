@@ -203,7 +203,7 @@ class ShopsUsersManager
 
     $user->setPassword($storeUnit);
     $user->set('field_storeunit', $storeUnit);
-    $user->set('ip_login', [
+    $user->set('ip_login_data', [
       'ip_start' => inet_pton($data['ip']),
       'ip_end' => inet_pton($data['ip']),
     ]);
